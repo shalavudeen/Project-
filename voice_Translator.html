@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>English to Tamil Translator</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #0B0223; /* Deep dark purple */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+            color: #D1C4E9; /* Light pastel purple text */
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(30, 15, 50, 0.8); /* Dark purple with transparency */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #BB86FC; /* Neon purple glow */
+        }
+
+        h2 {
+            color: #CE93D8; /* Brighter pastel purple heading */
+            text-shadow: 0 0 10px #E040FB; /* Electric pink glow */
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            border: 2px solid #9C27B0; /* Vibrant purple border */
+            background-color: transparent;
+            color: #E1BEE7; /* Very light pastel purple text */
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 8px #AB47BC; /* Soft purple glow */
+        }
+
+        button:hover {
+            background-color: #AB47BC; /* Hover background */
+            color: #0B0223; /* Dark text on hover */
+            box-shadow: 0 0 15px #E040FB; /* Stronger electric pink glow on hover */
+        }
+
+        p {
+            font-size: 20px;
+            margin: 10px 0;
+            text-shadow: 0 0 3px #D1C4E9; /* Subtle glow for paragraph text */
+        }
+
+        strong {
+            color: #F3E5F5; /* Even lighter pastel purple for emphasis */
+        }
+
+        #englishText, #tamilText {
+            color: #F8BBD0; /* Pale pink for translated text */
+            text-shadow: 0 0 5px #F06292; /* Pink glow for translated text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎙️ Speak in English, see Tamil</h2>
+        <button onclick="startRecognition()">Start Speaking</button>
+        <p><strong>English:</strong> <span id="englishText"></span></p>
+        <p><strong>Tamil:</strong> <span id="tamilText"></span></p>
+    </div>
+
+    <script>
+        const englishSpan = document.getElementById('englishText');
+        const tamilSpan = document.getElementById('tamilText');
+
+        function startRecognition() {
+            const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript;
+                englishSpan.textContent = text;
+
+                // Translate using Google Translate embedded link
+                const translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ta&dt=t&q=${encodeURIComponent(text)}`;
+                fetch(translateUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        const tamil = data[0][0][0];
+                        tamilSpan.textContent = tamil;
+                    })
+                    .catch(err => {
+                        tamilSpan.textContent = "Translation failed.";
+                        console.error(err);
+                    });
+            };
+        }
+    </script>
+</body>
+</html>
